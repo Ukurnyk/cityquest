@@ -1,36 +1,59 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ActivityIndicator,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/types';
+import { api } from '@/services/api';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export const AuthScreen = () => {
   const navigation = useNavigation<NavigationProp>();
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
-    // TODO: Реализовать логику авторизации
-    navigation.navigate('Main');
+  const handleLogin = async (type: 'anon' | 'google') => {
+    setLoading(true);
+    try {
+      if (type === 'anon') {
+        await api.loginAnon();
+      } else {
+        await api.loginGoogle();
+      }
+      navigation.replace('Main');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>CityQuest</Text>
       <Text style={styles.subtitle}>Исследуй город, получай награды</Text>
-
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Войти через VK</Text>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => handleLogin('anon')}
+        disabled={loading}
+      >
+        <Text style={styles.buttonText}>Войти как гость</Text>
       </TouchableOpacity>
-
       <TouchableOpacity
         style={[styles.button, styles.secondaryButton]}
-        onPress={handleLogin}
+        onPress={() => handleLogin('google')}
+        disabled={loading}
       >
         <Text style={[styles.buttonText, styles.secondaryButtonText]}>
           Войти через Google
         </Text>
       </TouchableOpacity>
+      {loading && (
+        <ActivityIndicator style={{ marginTop: 24 }} color='#4B6CFF' />
+      )}
     </View>
   );
 };

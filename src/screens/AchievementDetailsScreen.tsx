@@ -1,56 +1,69 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  ActivityIndicator,
+} from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RouteProp } from '@react-navigation/native';
 import { Achievement, RootStackParamList } from '@/types';
+import { api } from '@/services/api';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 type RouteProps = RouteProp<RootStackParamList, 'AchievementDetails'>;
-
-// Временные данные для тестирования
-const mockAchievement: Achievement = {
-  id: '1',
-  title: 'Кофейня на Невском',
-  description:
-    'Выпей кофе в легендарной кофейне на Невском проспекте. Это место известно своим уникальным интерьером и атмосферой.',
-  xpReward: 50,
-  type: 'location',
-  location: {
-    latitude: 59.9343,
-    longitude: 30.3351,
-    radius: 100,
-  },
-  isCompleted: false,
-};
 
 export const AchievementDetailsScreen = () => {
   const route = useRoute<RouteProps>();
   const navigation = useNavigation<NavigationProp>();
   const { achievementId } = route.params;
+  const [achievement, setAchievement] = useState<Achievement | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [completing, setCompleting] = useState(false);
 
-  const handleComplete = () => {
-    // TODO: Реализовать логику завершения достижения
-    navigation.goBack();
+  useEffect(() => {
+    api.getAchievements().then((list) => {
+      setAchievement(list.find((a) => a.id === achievementId) || null);
+      setLoading(false);
+    });
+  }, [achievementId]);
+
+  const handleComplete = async () => {
+    if (!achievement || achievement.isCompleted) return;
+    setCompleting(true);
+    const updated = await api.completeAchievement(achievement.id);
+    setAchievement(updated);
+    setCompleting(false);
   };
+
+  if (loading || !achievement) {
+    return (
+      <View style={styles.loader}>
+        <ActivityIndicator color='#4B6CFF' size='large' />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>{mockAchievement.title}</Text>
+        <Text style={styles.title}>{achievement.title}</Text>
         <View style={styles.xpContainer}>
-          <Text style={styles.xpText}>+{mockAchievement.xpReward} XP</Text>
+          <Text style={styles.xpText}>+{achievement.xpReward} XP</Text>
         </View>
       </View>
 
       <View style={styles.content}>
-        <Text style={styles.description}>{mockAchievement.description}</Text>
+        <Text style={styles.description}>{achievement.description}</Text>
 
         <View style={styles.infoContainer}>
           <View style={styles.infoItem}>
             <Text style={styles.infoLabel}>Тип</Text>
             <Text style={styles.infoValue}>
-              {mockAchievement.type === 'location' ? 'Место' : 'Событие'}
+              {achievement.type === 'location' ? 'Место' : 'Событие'}
             </Text>
           </View>
 
@@ -59,17 +72,23 @@ export const AchievementDetailsScreen = () => {
             <Text
               style={[
                 styles.infoValue,
-                { color: mockAchievement.isCompleted ? '#4CAF50' : '#FF6B4A' },
+                { color: achievement.isCompleted ? '#4CAF50' : '#FF6B4A' },
               ]}
             >
-              {mockAchievement.isCompleted ? 'Выполнено' : 'В процессе'}
+              {achievement.isCompleted ? 'Выполнено' : 'В процессе'}
             </Text>
           </View>
         </View>
 
-        {!mockAchievement.isCompleted && (
-          <TouchableOpacity style={styles.button} onPress={handleComplete}>
-            <Text style={styles.buttonText}>Отметить как выполненное</Text>
+        {!achievement.isCompleted && (
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleComplete}
+            disabled={completing}
+          >
+            <Text style={styles.buttonText}>
+              {completing ? 'Выполняется...' : 'Выполнить'}
+            </Text>
           </TouchableOpacity>
         )}
       </View>
@@ -145,6 +164,12 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
+  },
+  loader: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F7F8FA',
   },
 });
 
