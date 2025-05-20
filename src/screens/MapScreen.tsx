@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Dimensions, ActivityIndicator } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, UrlTile } from 'react-native-maps';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Achievement, RootStackParamList } from '@/types';
 import { api } from '@/services/api';
+import { useTheme } from '@/theme/ThemeContext';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -12,6 +13,7 @@ export const MapScreen = () => {
   const navigation = useNavigation<NavigationProp>();
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [loading, setLoading] = useState(true);
+  const { theme } = useTheme();
 
   useEffect(() => {
     api.getAchievements().then((data) => {
@@ -44,7 +46,9 @@ export const MapScreen = () => {
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
+        customMapStyle={theme.mapStyle}
       >
+        {theme.tileUrl && <UrlTile urlTemplate={theme.tileUrl} maximumZ={19} />}
         {achievements.map((achievement) => (
           <Marker
             key={achievement.id}
@@ -52,7 +56,11 @@ export const MapScreen = () => {
               latitude: achievement.location?.latitude || 0,
               longitude: achievement.location?.longitude || 0,
             }}
-            pinColor={achievement.isCompleted ? '#4B6CFF' : '#FF6B4A'}
+            pinColor={
+              achievement.isCompleted
+                ? theme.colors.primary
+                : theme.colors.accent
+            }
             onPress={() => handleMarkerPress(achievement)}
           />
         ))}

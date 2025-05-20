@@ -11,6 +11,7 @@ import MapScreen from '@screens/MapScreen';
 import ProfileScreen from '@screens/ProfileScreen';
 import LeaderboardScreen from '@screens/LeaderboardScreen';
 import AchievementDetailsScreen from '@screens/AchievementDetailsScreen';
+import SettingsScreen from '@screens/SettingsScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator();
@@ -59,6 +60,17 @@ const MainTabs = () => {
           tabBarLabel: 'Топ',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name='trophy-outline' color={color} size={size} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name='Settings'
+        component={SettingsScreen}
+        options={{
+          headerShown: false,
+          tabBarLabel: 'Настройки',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name='settings-outline' color={color} size={size} />
           ),
         }}
       />

@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
 import { User, Badge } from '@/types';
+import { useTheme } from '@/theme/ThemeContext';
 
 // Временные данные для тестирования
 const mockUser: User = {
@@ -32,6 +33,7 @@ const mockUser: User = {
 };
 
 export const ProfileScreen = () => {
+  const { theme } = useTheme();
   const renderBadge = (badge: Badge) => (
     <View key={badge.id} style={styles.badgeContainer}>
       <Text style={styles.badgeIcon}>{badge.icon}</Text>
@@ -43,26 +45,38 @@ export const ProfileScreen = () => {
   );
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.header}>
+    <ScrollView
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
+      <View style={[styles.header, { backgroundColor: theme.colors.card }]}>
         <Image source={{ uri: mockUser.avatar }} style={styles.avatar} />
-        <Text style={styles.username}>{mockUser.username}</Text>
+        <Text style={[styles.username, { color: theme.colors.text }]}>
+          {mockUser.username}
+        </Text>
         <View style={styles.levelContainer}>
-          <Text style={styles.levelText}>Уровень {mockUser.level}</Text>
+          <Text style={[styles.levelText, { color: theme.colors.muted }]}>
+            Уровень {mockUser.level}
+          </Text>
           <View style={styles.xpBar}>
             <View
               style={[
                 styles.xpProgress,
-                { width: `${(mockUser.xp % 1000) / 10}%` },
+                {
+                  width: `${(mockUser.xp % 1000) / 10}%`,
+                  backgroundColor: theme.colors.primary,
+                },
               ]}
             />
           </View>
-          <Text style={styles.xpText}>{mockUser.xp} XP</Text>
+          <Text style={[styles.xpText, { color: theme.colors.muted }]}>
+            {mockUser.xp} XP
+          </Text>
         </View>
       </View>
-
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Достижения</Text>
+        <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+          Достижения
+        </Text>
         {mockUser.badges.map(renderBadge)}
       </View>
     </ScrollView>
