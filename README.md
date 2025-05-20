@@ -60,6 +60,7 @@ npx expo start -c
 
 ---
 
-**Автор:** [Твой ник/имя]
+**Автор:** Андрей Ёлкин
 
 Если есть вопросы — пиши issue или в Telegram!
+<https://t.me/tutaAndrey>
