@@ -1,59 +1,85 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
-  TouchableOpacity,
   StyleSheet,
-  ActivityIndicator,
+  TextInput,
+  TouchableOpacity,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '@/types';
-import { api } from '@/services/api';
+import { theme } from '@/presentation/theme';
+
+type RootStackParamList = {
+  Auth: undefined;
+  Main: undefined;
+};
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-export const AuthScreen = () => {
+const AuthScreen = () => {
   const navigation = useNavigation<NavigationProp>();
-  const [loading, setLoading] = useState(false);
+  const [isLogin, setIsLogin] = React.useState(true);
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [username, setUsername] = React.useState('');
 
-  const handleLogin = async (type: 'anon' | 'google') => {
-    setLoading(true);
-    try {
-      if (type === 'anon') {
-        await api.loginAnon();
-      } else {
-        await api.loginGoogle();
-      }
+  const handleSubmit = () => {
+    // Для тестирования можно использовать любые данные
+    if (email && password) {
       navigation.replace('Main');
-    } finally {
-      setLoading(false);
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>CityQuest</Text>
-      <Text style={styles.subtitle}>Исследуй город, получай награды</Text>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => handleLogin('anon')}
-        disabled={loading}
-      >
-        <Text style={styles.buttonText}>Войти как гость</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[styles.button, styles.secondaryButton]}
-        onPress={() => handleLogin('google')}
-        disabled={loading}
-      >
-        <Text style={[styles.buttonText, styles.secondaryButtonText]}>
-          Войти через Google
+      <Text style={styles.title}>{isLogin ? 'Вход' : 'Регистрация'}</Text>
+
+      {!isLogin && (
+        <TextInput
+          style={styles.input}
+          placeholder='Имя пользователя'
+          value={username}
+          onChangeText={setUsername}
+          placeholderTextColor={theme.colors.muted}
+        />
+      )}
+
+      <TextInput
+        style={styles.input}
+        placeholder='Email'
+        value={email}
+        onChangeText={setEmail}
+        keyboardType='email-address'
+        autoCapitalize='none'
+        placeholderTextColor={theme.colors.muted}
+      />
+
+      <TextInput
+        style={styles.input}
+        placeholder='Пароль'
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+        placeholderTextColor={theme.colors.muted}
+      />
+
+      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+        <Text style={styles.buttonText}>
+          {isLogin ? 'Войти' : 'Зарегистрироваться'}
         </Text>
       </TouchableOpacity>
-      {loading && (
-        <ActivityIndicator style={{ marginTop: 24 }} color='#4B6CFF' />
-      )}
+
+      <TouchableOpacity
+        style={styles.switchButton}
+        onPress={() => setIsLogin(!isLogin)}
+      >
+        <Text style={styles.switchButtonText}>
+          {isLogin
+            ? 'Нет аккаунта? Зарегистрируйтесь'
+            : 'Уже есть аккаунт? Войдите'}
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -61,43 +87,42 @@ export const AuthScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F7F8FA',
-    alignItems: 'center',
+    backgroundColor: theme.colors.background,
+    padding: theme.spacing.lg,
     justifyContent: 'center',
-    padding: 20,
   },
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#2B2D42',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#7B7F9E',
-    marginBottom: 48,
-  },
-  button: {
-    backgroundColor: '#4B6CFF',
-    paddingVertical: 16,
-    paddingHorizontal: 32,
-    borderRadius: 12,
-    width: '100%',
-    marginBottom: 16,
-  },
-  buttonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '600',
+    ...theme.typography.h1,
+    color: theme.colors.text,
+    marginBottom: theme.spacing.xl,
     textAlign: 'center',
   },
-  secondaryButton: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: '#4B6CFF',
+  input: {
+    backgroundColor: theme.colors.card,
+    padding: theme.spacing.md,
+    borderRadius: theme.borderRadius.md,
+    marginBottom: theme.spacing.md,
+    color: theme.colors.text,
   },
-  secondaryButtonText: {
-    color: '#4B6CFF',
+  button: {
+    backgroundColor: theme.colors.primary,
+    padding: theme.spacing.md,
+    borderRadius: theme.borderRadius.md,
+    alignItems: 'center',
+    marginTop: theme.spacing.md,
+  },
+  buttonText: {
+    ...theme.typography.body,
+    color: theme.colors.card,
+    fontWeight: '600',
+  },
+  switchButton: {
+    marginTop: theme.spacing.lg,
+    alignItems: 'center',
+  },
+  switchButtonText: {
+    ...theme.typography.body,
+    color: theme.colors.primary,
   },
 });
 

@@ -1,0 +1,35 @@
+{
+  "language": "typescript",
+  "framework": "react-native",
+  "style": {
+    "quotes": "single",
+    "semi": true,
+    "trailingComma": "all",
+    "tabWidth": 2,
+    "printWidth": 100,
+    "arrowParens": "always",
+    "bracketSpacing": true,
+    "jsxBracketSameLine": false,
+    "endOfLine": "lf"
+  },
+  "project": {
+    "useThemeProvider": true,
+    "useDI": true,
+    "useHooks": true,
+    "useStrictTypes": true,
+    "directoryAliases": {
+      "@": "./src",
+      "@navigation": "./src/presentation/navigation"
+    }
+  },
+  "naming": {
+    "components": "PascalCase",
+    "files": "kebab-case",
+    "variables": "camelCase",
+    "constants": "UPPER_CASE"
+  },
+  "comments": {
+    "todo": "Используй // TODO: для пометок",
+    "fixme": "Используй // FIXME: для багов"
+  }
+}
