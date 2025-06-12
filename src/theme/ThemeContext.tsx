@@ -24,7 +24,7 @@ interface ThemeContextProps {
   setTheme: (name: ThemeName) => void;
 }
 
-const defaultTheme: Theme = {
+const lightTheme: Theme = {
   id: 'light',
   name: 'Светлая',
   colors: {
@@ -40,8 +40,24 @@ const defaultTheme: Theme = {
   },
 };
 
+const darkTheme: Theme = {
+  id: 'dark',
+  name: 'Темная',
+  colors: {
+    primary: '#6B8CFF',
+    accent: '#FF8B6A',
+    secondary: '#C08EFF',
+    background: '#1A1B1E',
+    card: '#2B2D42',
+    text: '#F7F8FA',
+    muted: '#9B9FBE',
+    error: '#FF6A6A',
+    border: '#3E3F42',
+  },
+};
+
 const ThemeContext = createContext<ThemeContextProps>({
-  theme: defaultTheme,
+  theme: lightTheme,
   setTheme: () => {},
 });
 
@@ -50,15 +66,16 @@ export const useTheme = () => useContext(ThemeContext);
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [theme, setThemeState] = useState<Theme>(defaultTheme);
+  const [theme, setThemeState] = useState<Theme>(lightTheme);
 
   const setTheme = (name: ThemeName) => {
-    setThemeState({
-      id: name,
-      name:
-        name === 'light' ? 'Светлая' : name === 'dark' ? 'Темная' : 'Системная',
-      colors: defaultTheme.colors,
-    });
+    if (name === 'system') {
+      // TODO: Добавить определение системной темы
+      setThemeState(lightTheme);
+      return;
+    }
+
+    setThemeState(name === 'light' ? lightTheme : darkTheme);
   };
 
   return (

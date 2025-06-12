@@ -1,0 +1,16 @@
+query GetUser {
+  userByToken {
+    id
+    username
+    email
+    avatarUrl
+    city {
+      id
+      name
+    }
+  }
+}
+
+mutation CreateUser($user: UserForCreateInput!) {
+  createUser(user: $user)
+}
