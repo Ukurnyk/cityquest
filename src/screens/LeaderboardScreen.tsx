@@ -1,59 +1,74 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, Image } from 'react-native';
-import { LeaderboardEntry } from '@/types';
+import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { User } from '@/domain/entities/User';
+import { theme } from '@/presentation/theme';
 
-// Временные данные для тестирования
-const mockLeaderboard: LeaderboardEntry[] = [
+const mockUsers: User[] = [
   {
-    userId: '1',
-    username: 'Иван Петров',
-    avatar: 'https://via.placeholder.com/50',
-    xp: 1250,
-    rank: 1,
-    achievementsCount: 15,
+    id: '1',
+    username: 'JohnDoe',
+    email: 'john@example.com',
+    level: 10,
+    experience: 5000,
+    achievements: [],
+    quests: [],
+    avatar: 'https://example.com/avatar1.jpg',
+    stats: {
+      questsCompleted: 0,
+      achievementsUnlocked: 0,
+      totalPoints: 0,
+      distanceWalked: 0,
+    },
+    settings: {
+      notifications: true,
+      darkMode: false,
+      language: 'ru',
+    },
+    createdAt: new Date(),
+    updatedAt: new Date(),
   },
   {
-    userId: '2',
-    username: 'Мария Иванова',
-    avatar: 'https://via.placeholder.com/50',
-    xp: 1100,
-    rank: 2,
-    achievementsCount: 12,
-  },
-  {
-    userId: '3',
-    username: 'Алексей Сидоров',
-    avatar: 'https://via.placeholder.com/50',
-    xp: 950,
-    rank: 3,
-    achievementsCount: 10,
+    id: '2',
+    username: 'JaneSmith',
+    email: 'jane@example.com',
+    level: 8,
+    experience: 3500,
+    achievements: [],
+    quests: [],
+    avatar: 'https://example.com/avatar2.jpg',
+    stats: {
+      questsCompleted: 0,
+      achievementsUnlocked: 0,
+      totalPoints: 0,
+      distanceWalked: 0,
+    },
+    settings: {
+      notifications: true,
+      darkMode: false,
+      language: 'ru',
+    },
+    createdAt: new Date(),
+    updatedAt: new Date(),
   },
 ];
 
 export const LeaderboardScreen = () => {
-  const renderItem = ({ item }: { item: LeaderboardEntry }) => (
-    <View style={styles.leaderboardItem}>
-      <Text style={styles.rank}>#{item.rank}</Text>
-      <Image source={{ uri: item.avatar }} style={styles.avatar} />
-      <View style={styles.userInfo}>
-        <Text style={styles.username}>{item.username}</Text>
-        <Text style={styles.achievements}>
-          {item.achievementsCount} достижений
-        </Text>
-      </View>
-      <Text style={styles.xp}>{item.xp} XP</Text>
+  const renderItem = ({ item, index }: { item: User; index: number }) => (
+    <View style={styles.item}>
+      <Text style={styles.rank}>#{index + 1}</Text>
+      <Text style={styles.username}>{item.username}</Text>
+      <Text style={styles.level}>Уровень {item.level}</Text>
+      <Text style={styles.xp}>{item.experience} XP</Text>
     </View>
   );
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Топ исследователей</Text>
-      </View>
+      <Text style={styles.title}>Таблица лидеров</Text>
       <FlatList
-        data={mockLeaderboard}
+        data={mockUsers}
         renderItem={renderItem}
-        keyExtractor={(item) => item.userId}
+        keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
       />
     </View>
@@ -63,59 +78,43 @@ export const LeaderboardScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F7F8FA',
-  },
-  header: {
-    padding: 20,
-    backgroundColor: '#FFFFFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+    backgroundColor: theme.colors.background,
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#2B2D42',
+    ...theme.typography.h1,
+    color: theme.colors.text,
+    padding: theme.spacing.lg,
   },
   list: {
-    padding: 16,
+    padding: theme.spacing.md,
   },
-  leaderboardItem: {
+  item: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
+    backgroundColor: theme.colors.card,
+    padding: theme.spacing.md,
+    borderRadius: theme.borderRadius.md,
+    marginBottom: theme.spacing.sm,
   },
   rank: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#4B6CFF',
-    width: 40,
-  },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    marginRight: 12,
-  },
-  userInfo: {
-    flex: 1,
+    ...theme.typography.h2,
+    color: theme.colors.primary,
+    marginRight: theme.spacing.md,
   },
   username: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#2B2D42',
-    marginBottom: 4,
+    ...theme.typography.body,
+    color: theme.colors.text,
+    flex: 1,
   },
-  achievements: {
-    fontSize: 14,
-    color: '#7B7F9E',
+  level: {
+    ...theme.typography.small,
+    color: theme.colors.muted,
+    marginRight: theme.spacing.md,
   },
   xp: {
-    fontSize: 16,
+    ...theme.typography.small,
+    color: theme.colors.accent,
     fontWeight: '600',
-    color: '#4B6CFF',
   },
 });
 

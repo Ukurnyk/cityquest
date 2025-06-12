@@ -1,67 +1,28 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-} from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { useTheme } from '@/theme/ThemeContext';
-import { themes } from '@/theme/themes';
+import { theme } from '@/presentation/theme';
+import { ThemeSelector } from '@/presentation/components/ThemeSelector';
 
 export const SettingsScreen = () => {
-  const { theme, themeName, setTheme } = useTheme();
+  const { theme: currentTheme } = useTheme();
 
   return (
-    <ScrollView
-      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: currentTheme.colors.background },
+      ]}
     >
-      <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
-          Тема оформления
-        </Text>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 8 }}>
-          {Object.entries(themes).map(([key, t]) => (
-            <TouchableOpacity
-              key={key}
-              style={{
-                backgroundColor:
-                  themeName === key ? theme.colors.primary : theme.colors.card,
-                padding: 12,
-                marginRight: 12,
-                marginBottom: 12,
-                borderRadius: 8,
-                minWidth: 120,
-                alignItems: 'center',
-              }}
-              onPress={() => setTheme(key as any)}
-            >
-              <Text
-                style={{
-                  color: themeName === key ? '#fff' : theme.colors.text,
-                }}
-              >
-                {t.name}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </View>
-    </ScrollView>
+      <ThemeSelector />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  section: {
-    padding: 20,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 8,
+    padding: theme.spacing.lg,
   },
 });
 

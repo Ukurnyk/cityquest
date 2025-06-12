@@ -2,7 +2,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { RootStackParamList } from '@/types';
+import { RootStackParamList, TabParamList } from '@/types/navigation';
 import { Ionicons } from '@expo/vector-icons';
 
 // Импорты экранов (будут созданы позже)
@@ -14,7 +14,7 @@ import AchievementDetailsScreen from '@screens/AchievementDetailsScreen';
 import SettingsScreen from '@screens/SettingsScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
-const Tab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator<TabParamList>();
 
 const MainTabs = () => {
   return (
@@ -28,13 +28,13 @@ const MainTabs = () => {
           elevation: 0,
           shadowOpacity: 0,
         },
+        headerShown: false,
       }}
     >
       <Tab.Screen
         name='Map'
         component={MapScreen}
         options={{
-          headerShown: false,
           tabBarLabel: 'Карта',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name='map-outline' color={color} size={size} />
@@ -45,7 +45,6 @@ const MainTabs = () => {
         name='Profile'
         component={ProfileScreen}
         options={{
-          headerShown: false,
           tabBarLabel: 'Профиль',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name='person-outline' color={color} size={size} />
@@ -56,7 +55,6 @@ const MainTabs = () => {
         name='Leaderboard'
         component={LeaderboardScreen}
         options={{
-          headerShown: false,
           tabBarLabel: 'Топ',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name='trophy-outline' color={color} size={size} />
@@ -67,7 +65,6 @@ const MainTabs = () => {
         name='Settings'
         component={SettingsScreen}
         options={{
-          headerShown: false,
           tabBarLabel: 'Настройки',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name='settings-outline' color={color} size={size} />
@@ -100,3 +97,5 @@ export const Navigation = () => {
     </NavigationContainer>
   );
 };
+
+export const RootNavigator = Navigation;
