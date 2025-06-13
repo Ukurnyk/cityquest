@@ -20,3 +20,23 @@ mutation LoginUser($login: String!, $password: String!) {
     refreshToken
   }
 }
+
+query GetAchievements($userId: UUID!) {
+  userAchievements(userId: $userId) {
+    id
+    isCompleted
+    progress
+    earnedAt
+    achievement {
+      id
+      title
+      description
+      lat
+      lon
+      iconUrl
+      cityId
+      categoryId
+      isPartner
+    }
+  }
+}

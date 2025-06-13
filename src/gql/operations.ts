@@ -23,6 +23,13 @@ export type LoginUserMutationVariables = Types.Exact<{
 
 export type LoginUserMutation = { __typename?: 'Mutation', loginUser: { __typename?: 'TokenPair', accessToken: string, refreshToken?: string | null } };
 
+export type GetAchievementsQueryVariables = Types.Exact<{
+  userId: Types.Scalars['UUID']['input'];
+}>;
+
+
+export type GetAchievementsQuery = { __typename?: 'Query', userAchievements: Array<{ __typename?: 'UserAchievement', id: string, isCompleted: boolean, progress: number, earnedAt: string, achievement: { __typename?: 'Achievement', id: string, title: string, description: string, lat?: number | null, lon?: number | null, iconUrl: string, cityId?: string | null, categoryId?: string | null, isPartner: boolean } }> };
+
 
 export const GetUserDocument = gql`
     query GetUser {
@@ -135,3 +142,57 @@ export function useLoginUserMutation(baseOptions?: Apollo.MutationHookOptions<Ty
 export type LoginUserMutationHookResult = ReturnType<typeof useLoginUserMutation>;
 export type LoginUserMutationResult = Apollo.MutationResult<Types.LoginUserMutation>;
 export type LoginUserMutationOptions = Apollo.BaseMutationOptions<Types.LoginUserMutation, Types.LoginUserMutationVariables>;
+export const GetAchievementsDocument = gql`
+    query GetAchievements($userId: UUID!) {
+  userAchievements(userId: $userId) {
+    id
+    isCompleted
+    progress
+    earnedAt
+    achievement {
+      id
+      title
+      description
+      lat
+      lon
+      iconUrl
+      cityId
+      categoryId
+      isPartner
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetAchievementsQuery__
+ *
+ * To run a query within a React component, call `useGetAchievementsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAchievementsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAchievementsQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useGetAchievementsQuery(baseOptions: Apollo.QueryHookOptions<Types.GetAchievementsQuery, Types.GetAchievementsQueryVariables> & ({ variables: Types.GetAchievementsQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Types.GetAchievementsQuery, Types.GetAchievementsQueryVariables>(GetAchievementsDocument, options);
+      }
+export function useGetAchievementsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Types.GetAchievementsQuery, Types.GetAchievementsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Types.GetAchievementsQuery, Types.GetAchievementsQueryVariables>(GetAchievementsDocument, options);
+        }
+export function useGetAchievementsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Types.GetAchievementsQuery, Types.GetAchievementsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<Types.GetAchievementsQuery, Types.GetAchievementsQueryVariables>(GetAchievementsDocument, options);
+        }
+export type GetAchievementsQueryHookResult = ReturnType<typeof useGetAchievementsQuery>;
+export type GetAchievementsLazyQueryHookResult = ReturnType<typeof useGetAchievementsLazyQuery>;
+export type GetAchievementsSuspenseQueryHookResult = ReturnType<typeof useGetAchievementsSuspenseQuery>;
+export type GetAchievementsQueryResult = Apollo.QueryResult<Types.GetAchievementsQuery, Types.GetAchievementsQueryVariables>;

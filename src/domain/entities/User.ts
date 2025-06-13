@@ -5,11 +5,15 @@ export interface User {
   id: string;
   username: string;
   email: string;
+  createdAt: string;
+  avatarUrl?: string | null;
+  isBlocked: boolean;
+  blockReason?: string | null;
+  isAdmin: boolean;
   level: number;
   experience: number;
   achievements: Achievement[];
   quests: Quest[];
-  avatar: string;
   stats: {
     questsCompleted: number;
     achievementsUnlocked: number;
@@ -21,6 +25,5 @@ export interface User {
     darkMode: boolean;
     language: string;
   };
-  createdAt: Date;
   updatedAt: Date;
 }

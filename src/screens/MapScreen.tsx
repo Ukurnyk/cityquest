@@ -19,13 +19,14 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Achievement, RootStackParamList } from '@/types';
 import { api } from '@/services/api';
 import { useTheme } from '@/theme/ThemeContext';
-import { Location } from '@/domain/entities/Location';
 import { theme } from '@/presentation/theme';
 import Svg, { Path } from 'react-native-svg';
 import { MapMarker } from '@/presentation/components/MapMarker';
 import { LocationModal } from '@/presentation/components/map/LocationModal';
 import { MapControls } from '@/presentation/components/map/MapControls';
 import { MapSearch } from '@/presentation/components/map/MapSearch';
+import { useGetAchievementsQuery } from '@/gql/operations';
+import { useStore } from '@/store';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -35,37 +36,6 @@ const initialRegion = {
   latitudeDelta: 0.0922,
   longitudeDelta: 0.0421,
 };
-
-const mockLocations: Location[] = [
-  {
-    id: '1',
-    name: 'Чувашский национальный музей',
-    description: 'Главный музей Чувашской Республики',
-    coordinates: {
-      latitude: 56.1322,
-      longitude: 47.2519,
-    },
-    type: 'museum',
-    rating: 4.5,
-    images: ['https://example.com/museum.jpg'],
-    address: 'г. Чебоксары, Красная площадь, 5/2',
-  },
-  {
-    id: '2',
-    name: 'Парк Победы',
-    description:
-      'Мемориальный комплекс в честь победы в Великой Отечественной войне',
-    coordinates: {
-      latitude: 56.1289,
-      longitude: 47.2478,
-    },
-    type: 'park',
-    rating: 4.8,
-    images: ['https://example.com/park.jpg'],
-    address: 'г. Чебоксары, ул. Зои Космодемьянской',
-  },
-];
-
 interface MapStyle {
   elementType?: string;
   featureType?: string;
@@ -78,14 +48,25 @@ const darkMapStyle: MapStyle[] = [];
 const MapScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
   const { theme: currentTheme } = useTheme();
-  const [selectedLocation, setSelectedLocation] = useState<Location | null>(
+  const [selectedLocation, setSelectedLocation] = useState<Achievement | null>(
     null
   );
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const mapRef = useRef<MapView>(null);
   const { height } = useWindowDimensions();
 
-  const handleLocationPress = (location: Location) => {
+  const userId = useStore((s) => s.user?.id);
+  const { data, loading, error } = useGetAchievementsQuery({
+    variables: { userId: userId || '' },
+    skip: !userId,
+  });
+  console.log('data', data);
+  const achievements =
+    data?.userAchievements?.map(
+      (ua: { achievement: Achievement }) => ua.achievement
+    ) ?? [];
+
+  const handleLocationPress = (location: Achievement) => {
     setSelectedLocation(location);
   };
 
@@ -101,6 +82,24 @@ const MapScreen: React.FC = () => {
     setIsSearchVisible(false);
   };
 
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size='large' color={currentTheme.colors.primary} />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text style={{ color: currentTheme.colors.error }}>
+          Ошибка загрузки точек
+        </Text>
+      </View>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -110,10 +109,13 @@ const MapScreen: React.FC = () => {
           style={styles.map}
           initialRegion={initialRegion}
         >
-          {mockLocations.map((location) => (
+          {achievements.map((location: Achievement) => (
             <Marker
               key={location.id}
-              coordinate={location.coordinates}
+              coordinate={{
+                latitude: location.lat ?? 0,
+                longitude: location.lon ?? 0,
+              }}
               onPress={() => handleLocationPress(location)}
             />
           ))}
@@ -176,7 +178,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   calloutDescription: {
-    ...theme.typography.small,
+    ...theme.typography.caption,
   },
   modalContainer: {
     flex: 1,
@@ -205,7 +207,7 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.md,
   },
   modalAddress: {
-    ...theme.typography.small,
+    ...theme.typography.caption,
     marginBottom: theme.spacing.sm,
   },
   modalRating: {

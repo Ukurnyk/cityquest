@@ -2,27 +2,53 @@ export interface User {
   id: string;
   username: string;
   email: string;
-  avatar?: string;
-  xp: number;
-  level: number;
-  achievements: Achievement[];
-  badges: Badge[];
+  createdAt: string;
+  avatarUrl?: string | null;
+  isBlocked: boolean;
+  blockReason?: string | null;
+  isAdmin: boolean;
 }
 
 export interface Achievement {
   id: string;
   title: string;
   description: string;
-  xpReward: number;
-  type: 'location' | 'event' | 'route';
-  location?: {
-    latitude: number;
-    longitude: number;
-    radius: number;
-  };
-  qrCode?: string;
+  goal: number;
+  rewardScore: number;
+  cityId?: string | null;
+  city: City;
+  iconUrl: string;
+  lat?: number | null;
+  lon?: number | null;
+  categoryId?: string | null;
+  category: AchievementCategory;
+  isPartner: boolean;
+  createdAt: string;
+}
+
+export interface AchievementCategory {
+  id: string;
+  name: string;
+  description?: string | null;
+}
+
+export interface City {
+  id: string;
+  name: string;
+  description?: string | null;
+  lat?: number | null;
+  lon?: number | null;
+}
+
+export interface UserAchievement {
+  id: string;
+  userId: string;
+  user: User;
+  achievementId: string;
+  achievement: Achievement;
+  progress: number;
   isCompleted: boolean;
-  completedAt?: Date;
+  earnedAt: string;
 }
 
 export interface Badge {

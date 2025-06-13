@@ -9,5 +9,5 @@ export interface UserAchievement {
   achievement: Achievement;
   progress: number;
   isCompleted: boolean;
-  earnedAt: Date;
+  earnedAt: string;
 }

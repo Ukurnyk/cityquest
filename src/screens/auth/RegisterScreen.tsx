@@ -10,12 +10,7 @@ import { authStyles } from './styles';
 import { client } from '@/api/client';
 import { GetUserDocument } from '@/gql/operations';
 import { useStore } from '@/store';
-
-type RootStackParamList = {
-  Login: undefined;
-  Register: undefined;
-  Main: undefined;
-};
+import { RootStackParamList } from '@/types/navigation';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -64,7 +59,7 @@ const RegisterScreen = () => {
 
       if (response?.createUser) {
         // Сохраняем токен
-        await useStore.getState().setToken(response.createUser);
+        await useStore.getState().setToken(response.createUser.accessToken);
         // Получаем пользователя по токену
         const userRes = await client.query({
           query: GetUserDocument,

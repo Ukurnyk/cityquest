@@ -4,11 +4,27 @@ export interface Achievement {
   description: string;
   goal: number;
   rewardScore: number;
-  cityId?: string;
+  cityId?: string | null;
+  city: City;
   iconUrl: string;
-  lat?: number;
-  lon?: number;
-  categoryId?: string;
+  lat?: number | null;
+  lon?: number | null;
+  categoryId?: string | null;
+  category: AchievementCategory;
   isPartner: boolean;
-  createdAt: Date;
+  createdAt: string;
+}
+
+export interface AchievementCategory {
+  id: string;
+  name: string;
+  description?: string | null;
+}
+
+export interface City {
+  id: string;
+  name: string;
+  description?: string | null;
+  lat?: number | null;
+  lon?: number | null;
 }

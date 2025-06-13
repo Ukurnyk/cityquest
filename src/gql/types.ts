@@ -156,7 +156,6 @@ export type User = {
   id: Scalars['UUID']['output'];
   isAdmin: Scalars['Boolean']['output'];
   isBlocked: Scalars['Boolean']['output'];
-  passwordHash: Scalars['String']['output'];
   username: Scalars['String']['output'];
 };
 

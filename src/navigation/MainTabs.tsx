@@ -7,6 +7,7 @@ import AchievementsScreen from '@/screens/AchievementsScreen';
 import { theme } from '@/presentation/theme';
 import { useTheme } from '@/theme/ThemeContext';
 import { TabParamList } from '@/types/navigation';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const Tab = createBottomTabNavigator<TabParamList>();
 
@@ -30,13 +31,9 @@ export const MainTabs = () => {
         component={MapScreen}
         options={{
           tabBarLabel: 'Карта',
-        }}
-      />
-      <Tab.Screen
-        name='Achievements'
-        component={AchievementsScreen}
-        options={{
-          tabBarLabel: 'Достижения',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name='map' color={color} size={size} />
+          ),
         }}
       />
       <Tab.Screen
@@ -44,13 +41,9 @@ export const MainTabs = () => {
         component={ProfileScreen}
         options={{
           tabBarLabel: 'Профиль',
-        }}
-      />
-      <Tab.Screen
-        name='Settings'
-        component={SettingsScreen}
-        options={{
-          tabBarLabel: 'Настройки',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name='person' color={color} size={size} />
+          ),
         }}
       />
     </Tab.Navigator>
