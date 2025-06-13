@@ -6,17 +6,95 @@ import { NetworkError } from '../../core/errors/AppError';
 
 @injectable()
 export class AchievementRepository implements IAchievementRepository {
-  private readonly apiUrl = `${AppConfig.API_URL}/achievements`;
+  private readonly apiUrl = `${AppConfig.API_URL}/graphql`;
 
   async findById(id: string): Promise<Achievement | null> {
     try {
-      const response = await fetch(`${this.apiUrl}/${id}`);
+      const query = `
+        query GetAchievement($achId: UUID!) {
+          achievementInfo(achId: $achId) {
+            id
+            title
+            description
+            goal
+            rewardScore
+            cityId
+            iconUrl
+            lat
+            lon
+            categoryId
+            isPartner
+            createdAt
+          }
+        }
+      `;
+
+      const response = await fetch(this.apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query,
+          variables: { achId: id },
+        }),
+      });
+
       if (!response.ok) throw new NetworkError('Failed to fetch achievement');
+
       const data = await response.json();
-      return data;
+      return data.data.achievementInfo;
     } catch (error) {
       console.error('Error fetching achievement:', error);
       return null;
+    }
+  }
+
+  async getUserAchievements(userId: string): Promise<Achievement[]> {
+    try {
+      const query = `
+        query GetUserAchievements($userId: UUID!) {
+          userAchievements(userId: $userId) {
+            achievement {
+              id
+              title
+              description
+              goal
+              rewardScore
+              cityId
+              iconUrl
+              lat
+              lon
+              categoryId
+              isPartner
+              createdAt
+            }
+            progress
+            isCompleted
+            earnedAt
+          }
+        }
+      `;
+
+      const response = await fetch(this.apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query,
+          variables: { userId },
+        }),
+      });
+
+      if (!response.ok)
+        throw new NetworkError('Failed to fetch user achievements');
+
+      const data = await response.json();
+      return data.data.userAchievements.map((ua: any) => ua.achievement);
+    } catch (error) {
+      console.error('Error fetching user achievements:', error);
+      return [];
     }
   }
 
@@ -28,32 +106,6 @@ export class AchievementRepository implements IAchievementRepository {
       return data;
     } catch (error) {
       console.error('Error fetching achievements:', error);
-      return [];
-    }
-  }
-
-  async findByType(type: Achievement['type']): Promise<Achievement[]> {
-    try {
-      const response = await fetch(`${this.apiUrl}?type=${type}`);
-      if (!response.ok)
-        throw new NetworkError('Failed to fetch achievements by type');
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error('Error fetching achievements by type:', error);
-      return [];
-    }
-  }
-
-  async findByRarity(rarity: Achievement['rarity']): Promise<Achievement[]> {
-    try {
-      const response = await fetch(`${this.apiUrl}?rarity=${rarity}`);
-      if (!response.ok)
-        throw new NetworkError('Failed to fetch achievements by rarity');
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error('Error fetching achievements by rarity:', error);
       return [];
     }
   }

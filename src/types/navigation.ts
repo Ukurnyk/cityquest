@@ -12,4 +12,5 @@ export type RootStackParamList = {
   Auth: undefined;
   Main: NavigatorScreenParams<TabParamList>;
   AchievementDetails: { achievementId: string };
+  Register: undefined;
 };

@@ -2,18 +2,13 @@ export interface Achievement {
   id: string;
   title: string;
   description: string;
-  icon: string;
-  type: 'QUEST' | 'EXPLORER' | 'SOCIAL' | 'SPECIAL';
-  rarity: 'COMMON' | 'RARE' | 'EPIC' | 'LEGENDARY';
-  progress: {
-    current: number;
-    total: number;
-  };
-  rewards: {
-    experience: number;
-    items?: string[];
-  };
-  unlockedAt?: Date;
+  goal: number;
+  rewardScore: number;
+  cityId?: string;
+  iconUrl: string;
+  lat?: number;
+  lon?: number;
+  categoryId?: string;
+  isPartner: boolean;
   createdAt: Date;
-  updatedAt: Date;
 }

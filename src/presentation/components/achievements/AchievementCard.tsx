@@ -8,37 +8,29 @@ interface AchievementCardProps {
   onPress: (achievement: Achievement) => void;
 }
 
-type RarityStyle = 'common' | 'rare' | 'epic' | 'legendary';
-
 export const AchievementCard: React.FC<AchievementCardProps> = ({
   achievement,
   onPress,
 }) => {
-  const progress =
-    (achievement.progress.current / achievement.progress.total) * 100;
-  const rarityStyle = achievement.rarity.toLowerCase() as RarityStyle;
-
   return (
     <TouchableOpacity
-      style={[styles.container, styles[rarityStyle]]}
+      style={[styles.container, achievement.isPartner && styles.partner]}
       onPress={() => onPress(achievement)}
     >
-      <Image source={{ uri: achievement.icon }} style={styles.icon} />
+      <Image source={{ uri: achievement.iconUrl }} style={styles.icon} />
       <View style={styles.content}>
         <View style={styles.header}>
           <Text style={styles.title}>{achievement.title}</Text>
-          <Text style={styles.rarity}>{achievement.rarity}</Text>
+          {achievement.isPartner && (
+            <Text style={styles.partnerBadge}>Партнер</Text>
+          )}
         </View>
         <Text style={styles.description} numberOfLines={2}>
           {achievement.description}
         </Text>
-        <View style={styles.progressContainer}>
-          <View style={[styles.progressBar, { width: `${progress}%` }]} />
-          <Text style={styles.progressText}>
-            {achievement.progress.current}/{achievement.progress.total}
-          </Text>
+        <View style={styles.rewardContainer}>
+          <Text style={styles.reward}>+{achievement.rewardScore} очков</Text>
         </View>
-        <Text style={styles.reward}>+{achievement.rewards.experience} XP</Text>
       </View>
     </TouchableOpacity>
   );
@@ -53,19 +45,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     ...theme.shadows.md,
   },
-  common: {
-    borderLeftWidth: 4,
-    borderLeftColor: theme.colors.muted,
-  },
-  rare: {
-    borderLeftWidth: 4,
-    borderLeftColor: theme.colors.primary,
-  },
-  epic: {
-    borderLeftWidth: 4,
-    borderLeftColor: theme.colors.secondary,
-  },
-  legendary: {
+  partner: {
     borderLeftWidth: 4,
     borderLeftColor: theme.colors.accent,
   },
@@ -88,9 +68,9 @@ const styles = StyleSheet.create({
     ...theme.typography.h2,
     color: theme.colors.text,
   },
-  rarity: {
-    ...theme.typography.small,
-    color: theme.colors.muted,
+  partnerBadge: {
+    ...theme.typography.caption,
+    color: theme.colors.accent,
     textTransform: 'uppercase',
   },
   description: {
@@ -98,25 +78,12 @@ const styles = StyleSheet.create({
     color: theme.colors.muted,
     marginBottom: theme.spacing.sm,
   },
-  progressContainer: {
-    height: 4,
-    backgroundColor: theme.colors.background,
-    borderRadius: 2,
-    marginBottom: theme.spacing.sm,
-    position: 'relative',
-  },
-  progressBar: {
-    height: '100%',
-    backgroundColor: theme.colors.primary,
-    borderRadius: 2,
-  },
-  progressText: {
-    ...theme.typography.small,
-    color: theme.colors.muted,
-    textAlign: 'right',
+  rewardContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
   },
   reward: {
-    ...theme.typography.small,
+    ...theme.typography.caption,
     color: theme.colors.accent,
     fontWeight: '600',
   },

@@ -1,0 +1,22 @@
+query GetUser {
+  userByToken {
+    id
+    username
+    email
+    avatarUrl
+  }
+}
+
+mutation CreateUser($user: UserForCreateInput!) {
+  createUser(user: $user) {
+    accessToken
+    refreshToken
+  }
+}
+
+mutation LoginUser($login: String!, $password: String!) {
+  loginUser(login: $login, password: $password) {
+    accessToken
+    refreshToken
+  }
+}
