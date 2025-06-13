@@ -7,34 +7,39 @@ import { authStyles } from './styles';
 import { useLoginUserMutation, GetUserDocument } from '@/gql/operations';
 import { client } from '@/api/client';
 import { useStore } from '@/store';
-
-type RootStackParamList = {
-  Login: undefined;
-  Main: undefined;
-  Register: undefined;
-};
+import { useForm, Controller } from 'react-hook-form';
+import { RootStackParamList } from '@/types/navigation';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 const LoginScreen = () => {
   const navigation = useNavigation<NavigationProp>();
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
   const [error, setError] = React.useState<string | null>(null);
   const [loginUser, { loading }] = useLoginUserMutation();
 
-  const handleSubmit = async () => {
+  type FormData = { login: string; password: string };
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    setError: setFormError,
+  } = useForm<FormData>({
+    defaultValues: { login: '', password: '' },
+  });
+
+  const onSubmit = async (data: FormData) => {
     setError(null);
-    if (!email || !password) {
-      setError('Введите email и пароль');
+    if (!data.login || !data.password) {
+      setFormError('login', { message: 'Введите логин' });
+      setFormError('password', { message: 'Введите пароль' });
       return;
     }
     try {
-      const { data } = await loginUser({
-        variables: { login: email, password },
+      const { data: resp } = await loginUser({
+        variables: { login: data.login, password: data.password },
       });
-      if (data?.loginUser) {
-        await useStore.getState().setToken(data.loginUser);
+      if (resp?.loginUser) {
+        await useStore.getState().setToken(resp.loginUser.accessToken);
         const userRes = await client.query({
           query: GetUserDocument,
           fetchPolicy: 'network-only',
@@ -76,34 +81,59 @@ const LoginScreen = () => {
         Вход
       </Text>
 
-      <TextInput
-        style={[
-          authStyles.input,
-          { backgroundColor: theme.colors.card, color: theme.colors.text },
-        ]}
-        placeholder='Email'
-        value={email}
-        onChangeText={setEmail}
-        keyboardType='email-address'
-        autoCapitalize='none'
-        placeholderTextColor={theme.colors.muted}
+      <Controller
+        control={control}
+        name='login'
+        rules={{ required: 'Обязательное поле' }}
+        render={({ field: { onChange, value } }) => (
+          <TextInput
+            style={[
+              authStyles.input,
+              { backgroundColor: theme.colors.card, color: theme.colors.text },
+            ]}
+            placeholder='Логин'
+            value={value}
+            onChangeText={onChange}
+            autoCapitalize='none'
+            placeholderTextColor={theme.colors.muted}
+          />
+        )}
       />
+      {errors.login && (
+        <Text style={[authStyles.error, { color: theme.colors.error }]}>
+          {' '}
+          {errors.login.message}{' '}
+        </Text>
+      )}
 
-      <TextInput
-        style={[
-          authStyles.input,
-          { backgroundColor: theme.colors.card, color: theme.colors.text },
-        ]}
-        placeholder='Пароль'
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        placeholderTextColor={theme.colors.muted}
+      <Controller
+        control={control}
+        name='password'
+        rules={{ required: 'Обязательное поле' }}
+        render={({ field: { onChange, value } }) => (
+          <TextInput
+            style={[
+              authStyles.input,
+              { backgroundColor: theme.colors.card, color: theme.colors.text },
+            ]}
+            placeholder='Пароль'
+            value={value}
+            onChangeText={onChange}
+            secureTextEntry
+            placeholderTextColor={theme.colors.muted}
+          />
+        )}
       />
+      {errors.password && (
+        <Text style={[authStyles.error, { color: theme.colors.error }]}>
+          {' '}
+          {errors.password.message}{' '}
+        </Text>
+      )}
 
       <TouchableOpacity
         style={[authStyles.button, { backgroundColor: theme.colors.primary }]}
-        onPress={handleSubmit}
+        onPress={handleSubmit(onSubmit)}
         disabled={loading}
       >
         <Text

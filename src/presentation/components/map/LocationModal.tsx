@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useTheme } from '@/theme/ThemeContext';
-import { Location } from '../../../types/location';
+import { Achievement } from '@/types';
 
 interface LocationModalProps {
-  location: Location;
+  location: Achievement;
   onClose: () => void;
   onStartQuest: () => void;
 }
@@ -21,13 +21,13 @@ export const LocationModal: React.FC<LocationModalProps> = ({
       style={[styles.container, { backgroundColor: currentTheme.colors.card }]}
     >
       <Text style={[styles.title, { color: currentTheme.colors.text }]}>
-        {location.name}
+        {location.title}
       </Text>
       <Text style={[styles.description, { color: currentTheme.colors.muted }]}>
         {location.description}
       </Text>
       <Text style={[styles.address, { color: currentTheme.colors.muted }]}>
-        {location.address}
+        {location.city?.name || ''}
       </Text>
       <View style={styles.buttons}>
         <TouchableOpacity

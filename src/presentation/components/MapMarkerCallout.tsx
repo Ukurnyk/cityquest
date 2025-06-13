@@ -1,12 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Callout } from 'react-native-maps';
-import { Location } from '@/domain/entities/Location';
+import { Achievement } from '@/types';
 import { theme } from '@/presentation/theme';
 import { useTheme } from '@/theme/ThemeContext';
 
 interface MapMarkerCalloutProps {
-  location: Location;
+  location: Achievement;
 }
 
 export const MapMarkerCallout: React.FC<MapMarkerCalloutProps> = ({
@@ -23,7 +23,7 @@ export const MapMarkerCallout: React.FC<MapMarkerCalloutProps> = ({
           style={[styles.title, { color: currentTheme.colors.text }]}
           numberOfLines={1}
         >
-          {location.name}
+          {location.title}
         </Text>
         <Text
           style={[styles.description, { color: currentTheme.colors.muted }]}
@@ -56,6 +56,6 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   description: {
-    ...theme.typography.small,
+    ...theme.typography.caption,
   },
 });

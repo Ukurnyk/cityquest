@@ -6,6 +6,7 @@ import { theme } from '@/presentation/theme';
 // Screens
 import LoginScreen from '@/screens/auth/LoginScreen';
 import RegisterScreen from '@/screens/auth/RegisterScreen';
+import { MainTabs } from '@/navigation/MainTabs';
 
 const Stack = createNativeStackNavigator();
 
@@ -35,6 +36,11 @@ const Navigation = () => {
         <Stack.Screen
           name='Register'
           component={RegisterScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name='Main'
+          component={MainTabs}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
