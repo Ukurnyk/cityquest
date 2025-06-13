@@ -1,7 +1,6 @@
 import React from 'react';
 import { ThemeProvider } from '@/theme/ThemeContext';
 import { SafeAreaProvider } from '@/theme/SafeAreaContext';
-import { RootNavigator } from '@/navigation';
 import { ApolloProvider } from '@apollo/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { client } from '@/api/client';
@@ -15,18 +14,16 @@ const queryClient = new QueryClient({
   },
 });
 
-const App = () => {
+export const AppProviders: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   return (
     <ApolloProvider client={client}>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
-          <SafeAreaProvider>
-            <RootNavigator />
-          </SafeAreaProvider>
+          <SafeAreaProvider>{children}</SafeAreaProvider>
         </ThemeProvider>
       </QueryClientProvider>
     </ApolloProvider>
   );
 };
-
-export default App;

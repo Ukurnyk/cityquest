@@ -14,10 +14,10 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 type Documents = {
-    "query GetUser {\n  userByToken {\n    id\n    username\n    email\n    avatarUrl\n    city {\n      id\n      name\n    }\n  }\n}\n\nquery Ping {\n  serverCurrentDateTime\n}\n\nmutation CreateUser($user: UserForCreateInput!) {\n  createUser(user: $user)\n}": typeof types.GetUserDocument,
+    "query GetUser {\n  userByToken {\n    id\n    username\n    email\n    avatarUrl\n  }\n}\n\nmutation CreateUser($user: UserForCreateInput!) {\n  createUser(user: $user)\n}": typeof types.GetUserDocument,
 };
 const documents: Documents = {
-    "query GetUser {\n  userByToken {\n    id\n    username\n    email\n    avatarUrl\n    city {\n      id\n      name\n    }\n  }\n}\n\nquery Ping {\n  serverCurrentDateTime\n}\n\nmutation CreateUser($user: UserForCreateInput!) {\n  createUser(user: $user)\n}": types.GetUserDocument,
+    "query GetUser {\n  userByToken {\n    id\n    username\n    email\n    avatarUrl\n  }\n}\n\nmutation CreateUser($user: UserForCreateInput!) {\n  createUser(user: $user)\n}": types.GetUserDocument,
 };
 
 /**
@@ -37,7 +37,7 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "query GetUser {\n  userByToken {\n    id\n    username\n    email\n    avatarUrl\n    city {\n      id\n      name\n    }\n  }\n}\n\nquery Ping {\n  serverCurrentDateTime\n}\n\nmutation CreateUser($user: UserForCreateInput!) {\n  createUser(user: $user)\n}"): (typeof documents)["query GetUser {\n  userByToken {\n    id\n    username\n    email\n    avatarUrl\n    city {\n      id\n      name\n    }\n  }\n}\n\nquery Ping {\n  serverCurrentDateTime\n}\n\nmutation CreateUser($user: UserForCreateInput!) {\n  createUser(user: $user)\n}"];
+export function graphql(source: "query GetUser {\n  userByToken {\n    id\n    username\n    email\n    avatarUrl\n  }\n}\n\nmutation CreateUser($user: UserForCreateInput!) {\n  createUser(user: $user)\n}"): (typeof documents)["query GetUser {\n  userByToken {\n    id\n    username\n    email\n    avatarUrl\n  }\n}\n\nmutation CreateUser($user: UserForCreateInput!) {\n  createUser(user: $user)\n}"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

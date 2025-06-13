@@ -4,13 +4,19 @@ query GetUser {
     username
     email
     avatarUrl
-    city {
-      id
-      name
-    }
   }
 }
 
 mutation CreateUser($user: UserForCreateInput!) {
-  createUser(user: $user)
+  createUser(user: $user) {
+    accessToken
+    refreshToken
+  }
+}
+
+mutation LoginUser($login: String!, $password: String!) {
+  loginUser(login: $login, password: $password) {
+    accessToken
+    refreshToken
+  }
 }

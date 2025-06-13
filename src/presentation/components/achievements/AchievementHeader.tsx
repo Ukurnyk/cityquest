@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Achievement } from '@/types';
+import { Achievement } from '@/domain/entities/Achievement';
+import { theme } from '@/presentation/theme';
 
 interface AchievementHeaderProps {
   achievement: Achievement;
@@ -12,8 +13,8 @@ export const AchievementHeader: React.FC<AchievementHeaderProps> = ({
   return (
     <View style={styles.header}>
       <Text style={styles.title}>{achievement.title}</Text>
-      <View style={styles.xpContainer}>
-        <Text style={styles.xpText}>+{achievement.xpReward} XP</Text>
+      <View style={styles.rewardContainer}>
+        <Text style={styles.rewardText}>+{achievement.rewardScore} очков</Text>
       </View>
     </View>
   );
@@ -21,27 +22,24 @@ export const AchievementHeader: React.FC<AchievementHeaderProps> = ({
 
 const styles = StyleSheet.create({
   header: {
-    backgroundColor: '#FFFFFF',
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: theme.spacing.md,
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#2B2D42',
-    marginBottom: 8,
+    ...theme.typography.h1,
+    color: theme.colors.text,
   },
-  xpContainer: {
-    backgroundColor: '#4B6CFF',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-    alignSelf: 'flex-start',
+  rewardContainer: {
+    backgroundColor: theme.colors.accent,
+    paddingHorizontal: theme.spacing.sm,
+    paddingVertical: theme.spacing.xs,
+    borderRadius: theme.borderRadius.sm,
   },
-  xpText: {
-    color: '#FFFFFF',
-    fontSize: 14,
+  rewardText: {
+    ...theme.typography.caption,
+    color: theme.colors.card,
     fontWeight: '600',
   },
 });

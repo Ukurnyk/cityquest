@@ -1,11 +1,13 @@
 import React from 'react';
-import { Navigation } from '@navigation/index';
-import { ThemeProvider } from './src/theme/ThemeContext';
+import Navigation from '@/navigation';
+import { AppProviders } from '@/providers/AppProviders';
 
-export default function App() {
+const App = () => {
   return (
-    <ThemeProvider>
+    <AppProviders>
       <Navigation />
-    </ThemeProvider>
+    </AppProviders>
   );
-}
+};
+
+export default App;
