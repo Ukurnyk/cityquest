@@ -1,12 +1,16 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { theme } from '@/presentation/theme';
 
 // Screens
-import LoginScreen from '@/screens/auth/LoginScreen';
-import RegisterScreen from '@/screens/auth/RegisterScreen';
+import { LoginScreen, RegisterScreen } from '@/features/auth';
 import { MainTabs } from '@/navigation/MainTabs';
+import {
+  AchievementsScreen,
+  AchievementDetailsScreen,
+} from '@/features/achievements';
+import { LeaderboardScreen } from '@/features/leaderboard';
+import { SettingsScreen } from '@/features/settings';
 
 const Stack = createNativeStackNavigator();
 
@@ -17,14 +21,15 @@ const Navigation = () => {
         initialRouteName='Login'
         screenOptions={{
           headerStyle: {
-            backgroundColor: theme.colors.background,
+            backgroundColor: '$background',
           },
-          headerTintColor: theme.colors.text,
+          headerTintColor: '$text',
           headerTitleStyle: {
-            ...theme.typography.h2,
+            fontSize: 20,
+            fontWeight: '600',
           },
           contentStyle: {
-            backgroundColor: theme.colors.background,
+            backgroundColor: '$background',
           },
         }}
       >
@@ -42,6 +47,26 @@ const Navigation = () => {
           name='Main'
           component={MainTabs}
           options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name='Achievements'
+          component={AchievementsScreen}
+          options={{ title: 'Достижения' }}
+        />
+        <Stack.Screen
+          name='AchievementDetails'
+          component={AchievementDetailsScreen}
+          options={{ title: 'Детали достижения' }}
+        />
+        <Stack.Screen
+          name='Leaderboard'
+          component={LeaderboardScreen}
+          options={{ title: 'Таблица лидеров' }}
+        />
+        <Stack.Screen
+          name='Settings'
+          component={SettingsScreen}
+          options={{ title: 'Настройки' }}
         />
       </Stack.Navigator>
     </NavigationContainer>

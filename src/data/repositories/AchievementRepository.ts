@@ -1,49 +1,20 @@
 import { injectable } from 'tsyringe';
 import { Achievement } from '../../domain/entities/Achievement';
 import { IAchievementRepository } from '../../domain/repositories/IAchievementRepository';
-import { AppConfig } from '../../core/config/app.config';
-import { NetworkError } from '../../core/errors/AppError';
+import { NetworkError } from '@/shared/errors/AppError';
 
 @injectable()
 export class AchievementRepository implements IAchievementRepository {
-  private readonly apiUrl = `${AppConfig.API_URL}/graphql`;
+  private readonly apiUrl = `${
+    process.env.API_URL || 'https://api.questly.com'
+  }/graphql`;
 
   async findById(id: string): Promise<Achievement | null> {
     try {
-      const query = `
-        query GetAchievement($achId: UUID!) {
-          achievementInfo(achId: $achId) {
-            id
-            title
-            description
-            goal
-            rewardScore
-            cityId
-            iconUrl
-            lat
-            lon
-            categoryId
-            isPartner
-            createdAt
-          }
-        }
-      `;
-
-      const response = await fetch(this.apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          query,
-          variables: { achId: id },
-        }),
-      });
-
+      const response = await fetch(`${this.apiUrl}/${id}`);
       if (!response.ok) throw new NetworkError('Failed to fetch achievement');
-
       const data = await response.json();
-      return data.data.achievementInfo;
+      return data;
     } catch (error) {
       console.error('Error fetching achievement:', error);
       return null;

@@ -1,14 +1,30 @@
-import { Achievement, User } from '@/types';
+import { Achievement } from '@/types';
+import { User } from '@/domain/entities/User';
 
 // Моковые данные
 let mockUser: User = {
   id: '1',
   username: 'Аноним',
   email: '',
-  xp: 0,
+  createdAt: '2024-01-01',
+  isBlocked: false,
+  isAdmin: false,
   level: 1,
+  experience: 0,
   achievements: [],
-  badges: [],
+  quests: [],
+  stats: {
+    questsCompleted: 0,
+    achievementsUnlocked: 0,
+    totalPoints: 0,
+    distanceWalked: 0,
+  },
+  settings: {
+    notifications: true,
+    darkMode: false,
+    language: 'ru',
+  },
+  updatedAt: new Date(),
 };
 
 let mockAchievements: Achievement[] = [
@@ -16,19 +32,41 @@ let mockAchievements: Achievement[] = [
     id: '1',
     title: 'Кофейня на Невском',
     description: 'Выпей кофе в легендарной кофейне',
-    xpReward: 50,
-    type: 'location',
-    location: { latitude: 59.9343, longitude: 30.3351, radius: 100 },
-    isCompleted: false,
+    goal: 1,
+    rewardScore: 50,
+    iconUrl: 'https://example.com/coffee.png',
+    isPartner: false,
+    createdAt: '2024-01-01',
+    city: {
+      id: '1',
+      name: 'Санкт-Петербург',
+      description: 'Северная столица',
+    },
+    category: {
+      id: '1',
+      name: 'Еда',
+      description: 'Достижения за посещение кафе и ресторанов',
+    },
   },
   {
     id: '2',
     title: 'Памятник Пушкину',
     description: 'Найди памятник великому поэту',
-    xpReward: 30,
-    type: 'location',
-    location: { latitude: 59.9345, longitude: 30.3353, radius: 50 },
-    isCompleted: false,
+    goal: 1,
+    rewardScore: 30,
+    iconUrl: 'https://example.com/pushkin.png',
+    isPartner: false,
+    createdAt: '2024-01-01',
+    city: {
+      id: '1',
+      name: 'Санкт-Петербург',
+      description: 'Северная столица',
+    },
+    category: {
+      id: '2',
+      name: 'Культура',
+      description: 'Достижения за посещение культурных мест',
+    },
   },
 ];
 
@@ -50,9 +88,11 @@ export const api = {
     return mockAchievements;
   },
   completeAchievement: async (id: string): Promise<Achievement> => {
-    mockAchievements = mockAchievements.map((a) =>
-      a.id === id ? { ...a, isCompleted: true, completedAt: new Date() } : a
-    );
-    return mockAchievements.find((a) => a.id === id)!;
+    const achievement = mockAchievements.find((a) => a.id === id);
+    if (achievement) {
+      // В реальном приложении здесь была бы логика обновления
+      return achievement;
+    }
+    throw new Error('Achievement not found');
   },
 };

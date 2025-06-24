@@ -2,19 +2,20 @@ import { injectable } from 'tsyringe';
 import { Quest } from '../../domain/entities/Quest';
 import { IQuestRepository } from '../../domain/repositories/IQuestRepository';
 import { QuestModel } from '../models/QuestModel';
-import { AppConfig } from '../../core/config/app.config';
-import { NetworkError } from '../../core/errors/AppError';
+import { NetworkError } from '@/shared/errors/AppError';
 
 @injectable()
 export class QuestRepository implements IQuestRepository {
-  private readonly apiUrl = `${AppConfig.API_URL}/quests`;
+  private readonly apiUrl = `${
+    process.env.API_URL || 'https://api.questly.com'
+  }/quests`;
 
   async findById(id: string): Promise<Quest | null> {
     try {
       const response = await fetch(`${this.apiUrl}/${id}`);
       if (!response.ok) throw new NetworkError('Failed to fetch quest');
       const data = await response.json();
-      return new QuestModel(data);
+      return data;
     } catch (error) {
       console.error('Error fetching quest:', error);
       return null;
@@ -26,7 +27,7 @@ export class QuestRepository implements IQuestRepository {
       const response = await fetch(this.apiUrl);
       if (!response.ok) throw new NetworkError('Failed to fetch quests');
       const data = await response.json();
-      return data.map((item: any) => new QuestModel(item));
+      return data;
     } catch (error) {
       console.error('Error fetching quests:', error);
       return [];
@@ -73,7 +74,7 @@ export class QuestRepository implements IQuestRepository {
       });
       if (!response.ok) throw new NetworkError('Failed to create quest');
       const result = await response.json();
-      return new QuestModel(result);
+      return result;
     } catch (error) {
       console.error('Error creating quest:', error);
       throw error;
@@ -89,7 +90,7 @@ export class QuestRepository implements IQuestRepository {
       });
       if (!response.ok) throw new NetworkError('Failed to update quest');
       const result = await response.json();
-      return new QuestModel(result);
+      return result;
     } catch (error) {
       console.error('Error updating quest:', error);
       throw error;

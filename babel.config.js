@@ -21,6 +21,14 @@ module.exports = function (api) {
           },
         },
       ],
+      [
+        '@tamagui/babel-plugin',
+        {
+          components: ['tamagui'],
+          config: './tamagui.config.ts',
+          logTimings: true,
+        },
+      ],
       'react-native-config',
     ],
   };

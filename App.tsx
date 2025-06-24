@@ -1,13 +1,8 @@
 import React from 'react';
-import Navigation from '@/navigation';
-import { AppProviders } from '@/providers/AppProviders';
+import { App } from '@/app';
 
-const App = () => {
-  return (
-    <AppProviders>
-      <Navigation />
-    </AppProviders>
-  );
+const AppRoot = () => {
+  return <App />;
 };
 
-export default App;
+export default AppRoot;

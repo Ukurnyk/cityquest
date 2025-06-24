@@ -1,42 +1,19 @@
 import { injectable } from 'tsyringe';
 import { City } from '../../domain/entities/City';
-import { ICityRepository } from '../../domain/repositories/ICityRepository';
-import { AppConfig } from '../../core/config/app.config';
-import { NetworkError } from '../../core/errors/AppError';
+import { NetworkError } from '@/shared/errors/AppError';
 
 @injectable()
-export class CityRepository implements ICityRepository {
-  private readonly apiUrl = `${AppConfig.API_URL}/graphql`;
+export class CityRepository {
+  private readonly apiUrl = `${
+    process.env.API_URL || 'https://api.questly.com'
+  }/graphql`;
 
   async findById(id: string): Promise<City | null> {
     try {
-      const query = `
-        query GetCity($cityId: UUID!) {
-          cityInfo(cityId: $cityId) {
-            id
-            name
-            description
-            lat
-            lon
-          }
-        }
-      `;
-
-      const response = await fetch(this.apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          query,
-          variables: { cityId: id },
-        }),
-      });
-
+      const response = await fetch(`${this.apiUrl}/${id}`);
       if (!response.ok) throw new NetworkError('Failed to fetch city');
-
       const data = await response.json();
-      return data.data.cityInfo;
+      return data;
     } catch (error) {
       console.error('Error fetching city:', error);
       return null;
@@ -45,47 +22,57 @@ export class CityRepository implements ICityRepository {
 
   async findAll(): Promise<City[]> {
     try {
-      const query = `
-        query GetCities {
-          citiesList {
-            id
-            name
-            description
-            lat
-            lon
-          }
-        }
-      `;
-
-      const response = await fetch(this.apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          query,
-        }),
-      });
-
+      const response = await fetch(this.apiUrl);
       if (!response.ok) throw new NetworkError('Failed to fetch cities');
-
       const data = await response.json();
-      return data.data.citiesList;
+      return data;
     } catch (error) {
       console.error('Error fetching cities:', error);
       return [];
     }
   }
 
-  async create(data: Omit<City, 'id'>): Promise<City> {
-    throw new Error('Method not implemented');
+  async create(data: Partial<City>): Promise<City> {
+    try {
+      const response = await fetch(this.apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) throw new NetworkError('Failed to create city');
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error('Error creating city:', error);
+      throw error;
+    }
   }
 
   async update(id: string, data: Partial<City>): Promise<City> {
-    throw new Error('Method not implemented');
+    try {
+      const response = await fetch(`${this.apiUrl}/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) throw new NetworkError('Failed to update city');
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error('Error updating city:', error);
+      throw error;
+    }
   }
 
   async delete(id: string): Promise<void> {
-    throw new Error('Method not implemented');
+    try {
+      const response = await fetch(`${this.apiUrl}/${id}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new NetworkError('Failed to delete city');
+    } catch (error) {
+      console.error('Error deleting city:', error);
+      throw error;
+    }
   }
 }

@@ -1,10 +1,7 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import MapScreen from '@/screens/MapScreen';
-import ProfileScreen from '@/screens/ProfileScreen';
-import { SettingsScreen } from '@/screens/SettingsScreen';
-import AchievementsScreen from '@/screens/AchievementsScreen';
-import { theme } from '@/presentation/theme';
+import { MapScreen } from '@/features/map';
+import { ProfileScreen } from '@/features/profile';
 import { useTheme } from '@/theme/ThemeContext';
 import { TabParamList } from '@/types/navigation';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -12,17 +9,17 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 const Tab = createBottomTabNavigator<TabParamList>();
 
 export const MainTabs = () => {
-  const { theme: currentTheme } = useTheme();
+  const { theme } = useTheme();
 
   return (
     <Tab.Navigator
       screenOptions={{
         tabBarStyle: {
-          backgroundColor: currentTheme.colors.card,
-          borderTopColor: currentTheme.colors.border,
+          backgroundColor: theme.colors.card,
+          borderTopColor: theme.colors.border,
         },
-        tabBarActiveTintColor: currentTheme.colors.primary,
-        tabBarInactiveTintColor: currentTheme.colors.muted,
+        tabBarActiveTintColor: theme.colors.primary,
+        tabBarInactiveTintColor: theme.colors.muted,
         headerShown: false,
       }}
     >

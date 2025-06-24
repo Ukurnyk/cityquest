@@ -2,10 +2,12 @@ import type { CodegenConfig } from '@graphql-codegen/cli';
 import path from 'path';
 
 const config: CodegenConfig = {
-  schema: path.resolve(__dirname, 'src/gql/schema.graphql'),
-  documents: [path.resolve(__dirname, 'src/gql/queries.graphql')],
+  schema: path.resolve(__dirname, 'src/services/apollo/gql/schema.graphql'),
+  documents: [
+    path.resolve(__dirname, 'src/services/apollo/gql/queries.graphql'),
+  ],
   generates: {
-    './src/gql/types.ts': {
+    './src/services/apollo/gql/types.ts': {
       plugins: ['typescript'],
       config: {
         scalars: {
@@ -17,7 +19,7 @@ const config: CodegenConfig = {
         constEnums: true,
       },
     },
-    './src/gql/operations.ts': {
+    './src/services/apollo/gql/operations.ts': {
       plugins: ['typescript-operations', 'typescript-react-apollo'],
       config: {
         withHooks: true,

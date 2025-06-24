@@ -1,13 +1,14 @@
 import { injectable } from 'tsyringe';
 import { IBaseRepository } from '@/domain/repositories/IBaseRepository';
-import { AppConfig } from '@/core/config/app.config';
-import { NetworkError } from '@/core/errors/AppError';
+import { NetworkError } from '@/shared/errors/AppError';
 import { Location } from '@/domain/entities/Location';
 import { LocationRepository as ILocationRepository } from '@/domain/repositories/LocationRepository';
 
 @injectable()
 export class LocationRepository implements ILocationRepository {
-  private readonly apiUrl = `${AppConfig.API_URL}/locations`;
+  private readonly apiUrl = `${
+    process.env.API_URL || 'https://api.questly.com'
+  }/locations`;
 
   async findById(id: string): Promise<Location | null> {
     try {

@@ -51,15 +51,6 @@ export interface UserAchievement {
   earnedAt: string;
 }
 
-export interface Badge {
-  id: string;
-  title: string;
-  description: string;
-  icon: string;
-  rarity: 'common' | 'rare' | 'epic' | 'legendary';
-  unlockedAt?: Date;
-}
-
 export interface LeaderboardEntry {
   userId: string;
   username: string;

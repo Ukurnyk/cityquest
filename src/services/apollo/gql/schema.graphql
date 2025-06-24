@@ -1,0 +1,142 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Achievement {
+  id: UUID!
+  title: String!
+  description: String!
+  goal: Int!
+  rewardScore: Int!
+  cityId: UUID
+  city: City!
+  iconUrl: String!
+  lat: Float
+  lon: Float
+  categoryId: UUID
+  category: AchievementCategory!
+  isPartner: Boolean!
+  createdAt: DateTime!
+}
+
+type AchievementCategory {
+  id: UUID!
+  name: String!
+  description: String
+}
+
+type City {
+  id: UUID!
+  name: String!
+  description: String
+  lat: Float
+  lon: Float
+}
+
+type Mutation {
+  "Если jwt токен просрочен, кидаешь его сюда и сервер пытается его обновить, если всё хорошо то отправляет новый токен, иначе ловишь ошибку в лицо"
+  tryRefreshAccessToken(refreshToken: String!): String! @cost(weight: "10")
+  "Мутация для создания пользователя, возвращает jwt токен"
+  createUser(user: UserForCreateInput!): TokenPair! @cost(weight: "10")
+  "Мутация для авторизации пользователя, возвращает новый jwt токен"
+  loginUser(login: String!, password: String!): TokenPair! @cost(weight: "10")
+  "Временная мутация для дропа бд пользователей :)"
+  deleteAllUsers: Boolean! @cost(weight: "10")
+}
+
+type Query {
+  "Получить серверное время"
+  serverCurrentDateTime: DateTime!
+  "Получить серверное время по UTC"
+  serverCurrentUTCDateTime: DateTime!
+  "AUTHORIZE-Получить данные о пользователе по его токену авторизации"
+  userByToken: User! @authorize @cost(weight: "10")
+  "AUTHORIZE-Получить данные о пользователе по его id"
+  userById(userId: UUID!): User! @authorize @cost(weight: "10")
+  logout(token: String!): Boolean! @authorize @cost(weight: "10")
+  "AUTHORIZE-Получит информацию об ачивке по её id"
+  achievementInfo(achId: UUID!): Achievement! @authorize @cost(weight: "10")
+  "AUTHORIZE-Получит информацию об ачивке по её id"
+  userCompletedAchievements(userId: UUID!): [UserAchievement!]!
+    @authorize
+    @cost(weight: "10")
+  "AUTHORIZE-Получит информацию об ачивке по её id"
+  userAchievements(userId: UUID!): [UserAchievement!]!
+    @authorize
+    @cost(weight: "10")
+  "AUTHORIZE-Получить данные о городе"
+  cityInfo(cityId: UUID!): City! @cost(weight: "10")
+  "AUTHORIZE-Получить список городов"
+  citiesList: [City!]! @cost(weight: "10")
+}
+
+type TokenPair {
+  accessToken: String!
+  refreshToken: String
+}
+
+type User {
+  id: UUID!
+  username: String!
+  email: String!
+  createdAt: DateTime!
+  avatarUrl: String
+  isBlocked: Boolean!
+  blockReason: String
+  isAdmin: Boolean!
+}
+
+type UserAchievement {
+  id: UUID!
+  userId: UUID!
+  user: User!
+  achievementId: UUID!
+  achievement: Achievement!
+  progress: Int!
+  isCompleted: Boolean!
+  earnedAt: DateTime!
+}
+
+input UserForCreateInput {
+  username: String!
+  email: String
+  password: String!
+}
+
+"Defines when a policy shall be executed."
+enum ApplyPolicy {
+  "Before the resolver was executed."
+  BEFORE_RESOLVER
+  "After the resolver was executed."
+  AFTER_RESOLVER
+  "The policy is applied in the validation step before the execution."
+  VALIDATION
+}
+
+"The authorize directive."
+directive @authorize(
+  "The name of the authorization policy that determines access to the annotated resource."
+  policy: String
+  "Roles that are allowed to access the annotated resource."
+  roles: [String!]
+  "Defines when when the authorize directive shall be applied.By default the authorize directives are applied during the validation phase."
+  apply: ApplyPolicy! = BEFORE_RESOLVER
+) repeatable on OBJECT | FIELD_DEFINITION
+
+"The purpose of the `cost` directive is to define a `weight` for GraphQL types, fields, and arguments. Static analysis can use these weights when calculating the overall cost of a query or response."
+directive @cost(
+  "The `weight` argument defines what value to add to the overall cost for every appearance, or possible appearance, of a type, field, argument, etc."
+  weight: String!
+) on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | ENUM | INPUT_FIELD_DEFINITION
+
+"The `@specifiedBy` directive is used within the type system definition language to provide a URL for specifying the behavior of custom scalar definitions."
+directive @specifiedBy(
+  "The specifiedBy URL points to a human-readable specification. This field will only read a result for scalar types."
+  url: String!
+) on SCALAR
+
+"The `DateTime` scalar represents an ISO-8601 compliant date time type."
+scalar DateTime @specifiedBy(url: "https://www.graphql-scalars.com/date-time")
+
+scalar UUID @specifiedBy(url: "https://tools.ietf.org/html/rfc4122")

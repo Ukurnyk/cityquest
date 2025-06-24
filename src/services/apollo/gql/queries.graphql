@@ -1,0 +1,136 @@
+query GetUser {
+  userByToken {
+    id
+    username
+    email
+    createdAt
+    avatarUrl
+    isBlocked
+    blockReason
+    isAdmin
+  }
+}
+
+mutation CreateUser($user: UserForCreateInput!) {
+  createUser(user: $user) {
+    accessToken
+    refreshToken
+  }
+}
+
+mutation LoginUser($login: String!, $password: String!) {
+  loginUser(login: $login, password: $password) {
+    accessToken
+    refreshToken
+  }
+}
+
+query GetUserById($userId: UUID!) {
+  userById(userId: $userId) {
+    id
+    username
+    email
+    createdAt
+    avatarUrl
+    isBlocked
+    blockReason
+    isAdmin
+  }
+}
+
+query GetAchievementInfo($achId: UUID!) {
+  achievementInfo(achId: $achId) {
+    id
+    title
+    description
+    goal
+    rewardScore
+    cityId
+    city {
+      id
+      name
+      description
+      lat
+      lon
+    }
+    iconUrl
+    lat
+    lon
+    categoryId
+    category {
+      id
+      name
+      description
+    }
+    isPartner
+    createdAt
+  }
+}
+
+query GetUserCompletedAchievements($userId: UUID!) {
+  userCompletedAchievements(userId: $userId) {
+    id
+    userId
+    user {
+      id
+      username
+      email
+    }
+    achievementId
+    achievement {
+      id
+      title
+      description
+      goal
+      rewardScore
+      iconUrl
+    }
+    progress
+    isCompleted
+    earnedAt
+  }
+}
+
+query GetUserAchievements($userId: UUID!) {
+  userAchievements(userId: $userId) {
+    id
+    userId
+    user {
+      id
+      username
+      email
+    }
+    achievementId
+    achievement {
+      id
+      title
+      description
+      goal
+      rewardScore
+      iconUrl
+    }
+    progress
+    isCompleted
+    earnedAt
+  }
+}
+
+query GetCityInfo($cityId: UUID!) {
+  cityInfo(cityId: $cityId) {
+    id
+    name
+    description
+    lat
+    lon
+  }
+}
+
+query GetCitiesList {
+  citiesList {
+    id
+    name
+    description
+    lat
+    lon
+  }
+}

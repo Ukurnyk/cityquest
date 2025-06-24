@@ -1,139 +1,86 @@
 import { injectable } from 'tsyringe';
 import { User } from '../../domain/entities/User';
 import { IUserRepository } from '../../domain/repositories/IUserRepository';
-import { AppConfig } from '../../core/config/app.config';
-import { NetworkError } from '../../core/errors/AppError';
+import {
+  useGetUserQuery,
+  useCreateUserMutation,
+  useLoginUserMutation,
+  useGetUserByIdQuery,
+} from '@/services/apollo/gql/operations';
+import { UserForCreateInput } from '@/services/apollo/types';
 
 @injectable()
 export class UserRepository implements IUserRepository {
-  private readonly apiUrl = `${AppConfig.API_URL}/users`;
+  // Методы для использования в React компонентах (хуки)
+  useGetCurrentUser() {
+    return useGetUserQuery();
+  }
+
+  useCreateUser() {
+    return useCreateUserMutation();
+  }
+
+  useLoginUser() {
+    return useLoginUserMutation();
+  }
+
+  useGetUserById(userId: string) {
+    return useGetUserByIdQuery({ variables: { userId } });
+  }
+
+  // Синхронные методы для совместимости с интерфейсом
+  async getCurrentUser(): Promise<User | null> {
+    // Этот метод должен использоваться только в хуках React
+    throw new Error('Use useGetCurrentUser() hook instead');
+  }
+
+  async createUser(userData: UserForCreateInput): Promise<string> {
+    // Этот метод должен использоваться только в хуках React
+    throw new Error('Use useCreateUser() hook instead');
+  }
 
   async findById(id: string): Promise<User | null> {
-    try {
-      const response = await fetch(`${this.apiUrl}/${id}`);
-      if (!response.ok) throw new NetworkError('Failed to fetch user');
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error('Error fetching user:', error);
-      return null;
-    }
+    // Этот метод должен использоваться только в хуках React
+    throw new Error('Use useGetUserById() hook instead');
   }
 
   async findAll(): Promise<User[]> {
-    try {
-      const response = await fetch(this.apiUrl);
-      if (!response.ok) throw new NetworkError('Failed to fetch users');
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error('Error fetching users:', error);
-      return [];
-    }
+    // Для получения всех пользователей нужно добавить соответствующую GraphQL операцию
+    throw new Error('Get all users operation not implemented');
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    try {
-      const response = await fetch(`${this.apiUrl}/email/${email}`);
-      if (!response.ok) throw new NetworkError('Failed to fetch user by email');
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error('Error fetching user by email:', error);
-      return null;
-    }
+    // Для получения пользователя по email нужно добавить соответствующую GraphQL операцию
+    throw new Error('Get user by email operation not implemented');
   }
 
   async create(data: Partial<User>): Promise<User> {
-    try {
-      const response = await fetch(this.apiUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) throw new NetworkError('Failed to create user');
-      const result = await response.json();
-      return result;
-    } catch (error) {
-      console.error('Error creating user:', error);
-      throw error;
-    }
+    // Этот метод должен использоваться только в хуках React
+    throw new Error('Use useCreateUser() hook instead');
   }
 
   async update(id: string, data: Partial<User>): Promise<User> {
-    try {
-      const response = await fetch(`${this.apiUrl}/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) throw new NetworkError('Failed to update user');
-      const result = await response.json();
-      return result;
-    } catch (error) {
-      console.error('Error updating user:', error);
-      throw error;
-    }
+    // Для обновления пользователя нужно добавить соответствующую GraphQL операцию
+    throw new Error('Update user operation not implemented');
   }
 
   async updateSettings(id: string, settings: User['settings']): Promise<User> {
-    try {
-      const response = await fetch(`${this.apiUrl}/${id}/settings`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ settings }),
-      });
-      if (!response.ok)
-        throw new NetworkError('Failed to update user settings');
-      const result = await response.json();
-      return result;
-    } catch (error) {
-      console.error('Error updating user settings:', error);
-      throw error;
-    }
+    // Для обновления настроек нужно добавить соответствующую GraphQL операцию
+    throw new Error('Update user settings operation not implemented');
   }
 
   async updateStats(id: string, stats: Partial<User['stats']>): Promise<User> {
-    try {
-      const response = await fetch(`${this.apiUrl}/${id}/stats`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ stats }),
-      });
-      if (!response.ok) throw new NetworkError('Failed to update user stats');
-      const result = await response.json();
-      return result;
-    } catch (error) {
-      console.error('Error updating user stats:', error);
-      throw error;
-    }
+    // Для обновления статистики нужно добавить соответствующую GraphQL операцию
+    throw new Error('Update user stats operation not implemented');
   }
 
   async addExperience(id: string, amount: number): Promise<User> {
-    try {
-      const response = await fetch(`${this.apiUrl}/${id}/experience`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount }),
-      });
-      if (!response.ok) throw new NetworkError('Failed to add experience');
-      const result = await response.json();
-      return result;
-    } catch (error) {
-      console.error('Error adding experience:', error);
-      throw error;
-    }
+    // Для добавления опыта нужно добавить соответствующую GraphQL операцию
+    throw new Error('Add experience operation not implemented');
   }
 
   async delete(id: string): Promise<void> {
-    try {
-      const response = await fetch(`${this.apiUrl}/${id}`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) throw new NetworkError('Failed to delete user');
-    } catch (error) {
-      console.error('Error deleting user:', error);
-      throw error;
-    }
+    // Для удаления пользователя нужно добавить соответствующую GraphQL операцию
+    throw new Error('Delete user operation not implemented');
   }
 }
