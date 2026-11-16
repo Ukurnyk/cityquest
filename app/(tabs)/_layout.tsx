@@ -1,57 +1,102 @@
+import { MaterialIcons } from '@expo/vector-icons';
+import { Tabs } from 'expo-router';
 import React from 'react';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Link, Tabs } from 'expo-router';
-import { Pressable } from 'react-native';
+import { type ColorValue } from 'react-native';
 
-import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
-import { useClientOnlyValue } from '@/components/useClientOnlyValue';
+import Colors from '@/constants/Colors';
 
-// You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
-function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>['name'];
-  color: string;
+function TabBarIcon({
+  name,
+  color,
+}: {
+  name: React.ComponentProps<typeof MaterialIcons>['name'];
+  color: ColorValue;
 }) {
-  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
+  // Tabs передают ColorValue (в RN 0.88 это ещё null | number), а типы @expo/vector-icons
+  // принимают только string | OpaqueColorValue. Цвета вкладок задаются строками в screenOptions.
+  return (
+    <MaterialIcons
+      size={26}
+      style={{ marginBottom: -3 }}
+      name={name}
+      color={typeof color === 'string' ? color : undefined}
+    />
+  );
 }
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const colors = Colors[colorScheme ?? 'light'];
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        // Disable the static render of the header on web
-        // to prevent a hydration error in React Navigation v6.
-        headerShown: useClientOnlyValue(false, true),
-      }}>
+        tabBarActiveTintColor: colors.tint,
+        tabBarInactiveTintColor: colors.tabIconDefault,
+        tabBarStyle: {
+          backgroundColor: colors.background,
+          borderTopColor: colors.border,
+          paddingTop: 8,
+          paddingBottom: 8,
+          height: 65,
+        },
+        tabBarLabelStyle: {
+          fontSize: 11,
+          fontWeight: '600',
+          marginTop: 2,
+        },
+        headerStyle: {
+          backgroundColor: colors.background,
+        },
+        headerTintColor: colors.text,
+        headerTitleStyle: {
+          fontWeight: '700',
+        },
+      }}
+    >
       <Tabs.Screen
-        name="index"
+        name='index'
         options={{
-          title: 'Tab One',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
-            <Link href="/modal" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="info-circle"
-                    size={25}
-                    color={Colors[colorScheme ?? 'light'].text}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
-          ),
+          title: 'Карта',
+          tabBarIcon: ({ color }) => <TabBarIcon name='map' color={color} />,
+          headerTitle: 'Questly',
         }}
       />
       <Tabs.Screen
-        name="two"
+        name='places'
         options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          title: 'Места',
+          tabBarIcon: ({ color }) => <TabBarIcon name='place' color={color} />,
+          headerTitle: 'Каталог мест',
+        }}
+      />
+      <Tabs.Screen
+        name='quests'
+        options={{
+          title: 'Квесты',
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name='explore' color={color} />
+          ),
+          headerShown: false,
+        }}
+      />
+      <Tabs.Screen
+        name='achievements'
+        options={{
+          title: 'Ачивки',
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name='emoji-events' color={color} />
+          ),
+          headerTitle: 'Достижения',
+        }}
+      />
+      <Tabs.Screen
+        name='profile'
+        options={{
+          title: 'Профиль',
+          tabBarIcon: ({ color }) => <TabBarIcon name='person' color={color} />,
+          headerTitle: 'Мой профиль',
         }}
       />
     </Tabs>
